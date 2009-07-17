@@ -1,3 +1,30 @@
+Given "an alert with:" do |table|
+  alert = Factory(:alert)
+  table.rows_hash.each do |key, value|
+    case key
+    when 'identifier'
+      alert.send("#{key}=", value)
+    when 'People'
+      names = value.split(',')
+      alert.users += names.map{|name| Given "a user named #{name}" }
+    end
+  end
+  alert.save!
+end
+
+Given 'an alert identified by $identifier' do |identifier|
+  Alert.find_by_identifier!(identifier)
+end
+
+When 'I view the alert identified by $identifier' do |identifier|
+  visit alert_path(Given("an alert identified by #{identifier}"))
+end
+
+When 'I login as the author of the alert identified by $identifier' do |identifier|
+  author = Given('an alert identified by $identifier').author
+  Given %Q|I am logged in as "#{author.email}"|
+end
+
 When "PhinMS delivers the message: $filename" do |filename|
   xml = File.read("#{Rails.root}/spec/fixtures/#{filename}")
   EDXL::Message.parse(xml)

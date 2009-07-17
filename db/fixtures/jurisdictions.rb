@@ -1,4 +1,8 @@
 Jurisdiction.seed(:name, :parent_id) do |j|
+  j.name = 'Federal'
+end
+
+Jurisdiction.seed(:name, :parent_id) do |j|
   j.name = 'Texas'
 end
 
