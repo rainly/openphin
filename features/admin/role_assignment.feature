@@ -27,7 +27,7 @@ Feature: Assigning roles to users for roles
     Given I am logged in as "admin@dallas.gov"
     And I go to the roles requests page for an admin
     And I follow "Assign Role"
-
+    
     When I fill out the assign roles form with:
       | People | John Smith, Jane Doe |
       | Role | Health Officer |
@@ -164,7 +164,6 @@ Feature: Assigning roles to users for roles
 	  And "admin@dallas.gov" should not receive an email
     And I should see "No jurisdiction was specified"
 
-  @sphinx @no-txn
   Scenario: Role assignment should not occur if no role is assigned
     Given I am logged in as "admin@dallas.gov"
     And I go to the roles requests page for an admin
@@ -178,7 +177,6 @@ Feature: Assigning roles to users for roles
 	  And "admin@dallas.gov" should not receive an email
     And I should see "No role was specified"
 
-  @sphinx @no-txn
   Scenario: Role assignment should not occur if no users are assigned
       Given I am logged in as "admin@dallas.gov"
       And I go to the roles requests page for an admin

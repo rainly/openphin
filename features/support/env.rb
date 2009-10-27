@@ -30,8 +30,7 @@ Spork.prefork do
 
   # http://github.com/bmabey/database_cleaner
   require 'database_cleaner'
-  DatabaseCleaner.clean_with :truncation
-  DatabaseCleaner.strategy = :truncation
+  DatabaseCleaner.strategy = :transaction
 
   TS = ThinkingSphinx::Configuration.instance
   ThinkingSphinx.deltas_enabled = true
@@ -57,18 +56,15 @@ Spork.each_run do
     FileUtils.remove_dir(Agency[:phin_ms_base_path], true)
   end
 
-# http://github.com/bmabey/database_cleaner
-  require 'database_cleaner'
-  DatabaseCleaner.strategy = :truncation
   Before do
     ActionMailer::Base.deliveries = []
     # load application-wide fixtures
-    # Dir[File.join(RAILS_ROOT, "features/fixtures", '*.rb')].sort.each { |fixture| load fixture }
+    Dir[File.join(RAILS_ROOT, "features/fixtures", '*.rb')].sort.each { |fixture| load fixture }
   end
 end
 
 Before('@no-txn') do
-  DatabaseCleaner.start
+  DatabaseCleaner.strategy = :truncation
   TS.build
   FileUtils.mkdir_p TS.searchd_file_path
   TS.controller.start
@@ -77,5 +73,14 @@ end
 
 After('@no-txn') do
   TS.controller.stop
-  DatabaseCleaner.clean
 end
+
+Before do
+  DatabaseCleaner.start
+end
+ 
+After do
+  DatabaseCleaner.clean
+  DatabaseCleaner.strategy = :transaction
+end
+
