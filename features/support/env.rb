@@ -28,39 +28,50 @@ Spork.prefork do
 
   World ActionController::RecordIdentifier
 
+  # http://github.com/bmabey/database_cleaner
+  require 'database_cleaner'
+  DatabaseCleaner.clean_with :truncation
+  DatabaseCleaner.strategy = :truncation
+
+  Before('@no-txn') do
+    DatabaseCleaner.start
+    TS.build
+    FileUtils.mkdir_p TS.searchd_file_path
+    TS.controller.start
+    TS.controller.index
+  end
+
+  After('@no-txn') do
+    TS.controller.stop
+    DatabaseCleaner.clean
+  end
+
   TS = ThinkingSphinx::Configuration.instance
   ThinkingSphinx.deltas_enabled = true
   ThinkingSphinx.updates_enabled = true
   ThinkingSphinx.suppress_delta_output = true
   
-  Before('@sphinx') do
-    TS.build
-    FileUtils.mkdir_p TS.searchd_file_path
-    TS.controller.start
-  end
-
-  After('@sphinx') do
-    TS.controller.stop
-    reset_database!
-  end
+  # Before('@sphinx') do
+  #   TS.build
+  #   FileUtils.mkdir_p TS.searchd_file_path
+  #   TS.controller.start
+  #   TS.controller.index
+  # end
+  # 
+  # After('@sphinx') do
+  #   TS.controller.stop
+  # end
   
   def without_transactions
-    @__cucumber_ar_connection.open_transactions.times do
-      @__cucumber_ar_connection.commit_db_transaction
-    end
+    # @__cucumber_ar_connection.open_transactions.times do
+    #   @__cucumber_ar_connection.commit_db_transaction
+    # end
     yield
-    @__cucumber_ar_connection.open_transactions.times do
-      @__cucumber_ar_connection.begin_db_transaction
-    end
+    # @__cucumber_ar_connection.open_transactions.times do
+    #   @__cucumber_ar_connection.begin_db_transaction
+    # end
   end
   
-  def reset_database!
-    # http://github.com/bmabey/database_cleaner
-    require 'database_cleaner'
-    DatabaseCleaner.strategy = :truncation
-    DatabaseCleaner.clean
-  end
-
 end
 
 Spork.each_run do
@@ -73,7 +84,7 @@ Spork.each_run do
   Before do
     ActionMailer::Base.deliveries = []
     # load application-wide fixtures
-    Dir[File.join(RAILS_ROOT, "features/fixtures", '*.rb')].sort.each { |fixture| load fixture }
+    # Dir[File.join(RAILS_ROOT, "features/fixtures", '*.rb')].sort.each { |fixture| load fixture }
   end
 
 end

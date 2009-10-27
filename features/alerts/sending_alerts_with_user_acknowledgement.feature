@@ -10,9 +10,8 @@ Feature: Acknowledging an alert
     When I go to the HAN
     And I follow "Send an Alert"
   
-  @sphinx
+  @sphinx @no-txn
   Scenario: Acknowledging an alert through an email with signing in
-    Given the search index was generated
     When I fill out the alert form with:
       | People | Keith Gaddis |
       | Title  | H1N1 SNS push packs to be delivered tomorrow |
@@ -35,9 +34,8 @@ Feature: Acknowledging an alert
     Then I should see "Successfully acknowledged alert: H1N1 SNS push packs to be delivered tomorrow"
     And the alert should be acknowledged
   
-  @sphinx
+  @sphinx @no-txn
   Scenario: Acknowledging an alert through an email without signing in
-    Given the search index was generated
     When I fill out the alert form with:
       | People | Keith Gaddis |
       | Title  | H1N1 SNS push packs to be delivered tomorrow |
@@ -59,9 +57,8 @@ Feature: Acknowledging an alert
     Then I should see "Successfully acknowledged alert: H1N1 SNS push packs to be delivered tomorrow"
     And the alert should be acknowledged
   
-  @sphinx  
+  @sphinx @no-txn  
   Scenario: A user cannot acknowledge an sensitive alert through an email without signing in
-    Given the search index was generated
     When I fill out the alert form with:
       | People | Keith Gaddis |
       | Title  | H1N1 SNS push packs to be delivered tomorrow |
