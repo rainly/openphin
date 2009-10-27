@@ -28,23 +28,26 @@ Spork.prefork do
 
   World ActionController::RecordIdentifier
 
-  ts = ThinkingSphinx::Configuration.instance
-  ts.build
-  FileUtils.mkdir_p ts.searchd_file_path
-  ts.controller.index
-  ts.controller.start
-  at_exit do
-    ts.controller.stop
-  end
+  # http://github.com/bmabey/database_cleaner
+  require 'database_cleaner'
+  DatabaseCleaner.clean_with :truncation
+  DatabaseCleaner.strategy = :truncation
+
+  TS = ThinkingSphinx::Configuration.instance
   ThinkingSphinx.deltas_enabled = true
   ThinkingSphinx.updates_enabled = true
   ThinkingSphinx.suppress_delta_output = true
-
-# Re-generate the index before each Scenario
-  Before do
-    ts.controller.index
-  end
-
+  
+  # Before('@sphinx') do
+  #   TS.build
+  #   FileUtils.mkdir_p TS.searchd_file_path
+  #   TS.controller.start
+  #   TS.controller.index
+  # end
+  # 
+  # After('@sphinx') do
+  #   TS.controller.stop
+  # end
 end
 
 Spork.each_run do
@@ -59,8 +62,20 @@ Spork.each_run do
   DatabaseCleaner.strategy = :truncation
   Before do
     ActionMailer::Base.deliveries = []
-    DatabaseCleaner.clean
     # load application-wide fixtures
-    Dir[File.join(RAILS_ROOT, "features/fixtures", '*.rb')].sort.each { |fixture| load fixture }
+    # Dir[File.join(RAILS_ROOT, "features/fixtures", '*.rb')].sort.each { |fixture| load fixture }
   end
+end
+
+Before('@no-txn') do
+  DatabaseCleaner.start
+  TS.build
+  FileUtils.mkdir_p TS.searchd_file_path
+  TS.controller.start
+  TS.controller.index
+end
+
+After('@no-txn') do
+  TS.controller.stop
+  DatabaseCleaner.clean
 end

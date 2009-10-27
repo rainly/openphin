@@ -68,11 +68,12 @@ Feature: Assigning roles to users for roles
     And "jane@example.com" should have the "Health Officer" role in "Dallas County"
 	  And "admin@dallas.gov" should not receive an email
 
+  @sphinx @no-txn
   Scenario: Admin can assign roles to users in their jurisdictions via the user profile
     Given I am logged in as "admin@dallas.gov"
     When I go to the dashboard page
     And I follow "Find People"
-    When delayed jobs are processed
+    And delayed jobs are processed
     When I fill in "Search" with "John"
     And I press "Search"
     And I follow "John Smith"
@@ -89,14 +90,15 @@ Feature: Assigning roles to users for roles
     And "john@example.com" should have the "Epidemiologist" role in "Dallas County"
 	  And "admin@dallas.gov" should not receive an email
 	  
+  @sphinx @no-txn	  
   Scenario: Admin can assign roles to users in their jurisdictions via the user profile when a role request already exists
     Given I am logged in as "admin@state.tx.us"
     And "john@example.com" has requested to be a "Epidemiologist" for "Dallas County"
     And all email has been delivered
+    And delayed jobs are processed
     When I go to the dashboard page
     And I follow "Find People"
-    When delayed jobs are processed
-    When I fill in "Search" with "John"
+    And I fill in "Search" with "John"
     And I press "Search"
     And I follow "John Smith"
     And I follow "Edit this Person"
@@ -162,6 +164,7 @@ Feature: Assigning roles to users for roles
 	  And "admin@dallas.gov" should not receive an email
     And I should see "No jurisdiction was specified"
 
+  @sphinx @no-txn
   Scenario: Role assignment should not occur if no role is assigned
     Given I am logged in as "admin@dallas.gov"
     And I go to the roles requests page for an admin
@@ -175,6 +178,7 @@ Feature: Assigning roles to users for roles
 	  And "admin@dallas.gov" should not receive an email
     And I should see "No role was specified"
 
+  @sphinx @no-txn
   Scenario: Role assignment should not occur if no users are assigned
       Given I am logged in as "admin@dallas.gov"
       And I go to the roles requests page for an admin
