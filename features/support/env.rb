@@ -63,7 +63,7 @@ Spork.each_run do
   end
 end
 
-Before('@no-txn') do
+Before('@sphinx') do
   DatabaseCleaner.strategy = :truncation
   TS.build
   FileUtils.mkdir_p TS.searchd_file_path
@@ -71,7 +71,7 @@ Before('@no-txn') do
   TS.controller.index
 end
 
-After('@no-txn') do
+After('@sphinx') do
   TS.controller.stop
 end
 
