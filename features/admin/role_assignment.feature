@@ -71,7 +71,7 @@ Feature: Assigning roles to users for roles
     And "jane@example.com" should have the "Health Officer" role in "Dallas County"
 	  And "admin@dallas.gov" should not receive an email
 
-  @sphinx @no-txn
+  @sphinx
   Scenario: Admin can assign roles to users in their jurisdictions via the user profile
     Given I am logged in as "admin@dallas.gov"
     When I go to the dashboard page
@@ -93,7 +93,7 @@ Feature: Assigning roles to users for roles
     And "john@example.com" should have the "Epidemiologist" role in "Dallas County"
 	  And "admin@dallas.gov" should not receive an email
 	  
-  @sphinx @no-txn	  
+  @sphinx	  
   Scenario: Admin can assign roles to users in their jurisdictions via the user profile when a role request already exists
     Given I am logged in as "admin@state.tx.us"
     And "john@example.com" has requested to be a "Epidemiologist" for "Dallas County"

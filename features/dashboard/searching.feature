@@ -1,4 +1,4 @@
-@sphinx @no-txn
+@sphinx
 Feature: Searching for users
   In order to quickly find people I want to communicate with
   As a logged in user
