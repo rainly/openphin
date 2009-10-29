@@ -20,14 +20,20 @@
 =end
 
 class Rollcall::RollcallController < ApplicationController
-  before_filter :rollcall_required, :except => "index"
+  app_toolbar "rollcall"
+
+  before_filter :rollcall_required, :except => :about
+
+  def about
+  end
 
   def index
     toolbar = current_user.roles.include?(Role.find_by_name('Rollcall')) ? "rollcall" : "application"
     Rollcall::RollcallController.app_toolbar toolbar
 
     @districts = current_user.jurisdictions.map(&:school_districts).flatten!
-    if @districts.empty?
+    if @districts.empty? || !current_user.roles.include?(Role.find_by_name('Rollcall'))
+      flash[:notice] = "You do not currently have any school districts in your jurisdiction enrolled in Rollcall.  Email your OpenPHIN administrator for more information."
       render "about"
     else
 
@@ -41,19 +47,17 @@ class Rollcall::RollcallController < ApplicationController
       else
         xlabels = ((1-timespan)..0).map{|d| (Date.today+d.days).strftime("%m-%d")}.join("|")
       end
-      @chart=Gchart.send(chart_type, :size => "600x400",
+      @chart=Gchart.send(chart_type, :size => "500x350",
                          :title => "Average % Absenteeism",
                          :axis_with_labels => "x,y",
                          :axis_labels => xlabels,
-#                         :max => 30,
                          :legend => @districts.map(&:name),
                          :data => @districts.map{|d| d.recent_absentee_rates(timespan).map{|m|m*100}},
-#                         :custom => "chxr=1,0,30",
+                         :custom => "chdlp=b",
                          :encoding => "text"
-#                         :max_value => 30
       )
+      ethans_crazy_absenteeism_summary_code
     end
-    ethans_crazy_absenteeism_summary_code
   end
 
   private
@@ -71,7 +75,7 @@ class Rollcall::RollcallController < ApplicationController
           reports.each do |report|
             if report.school == school
               stat[district.name][school.display_name] << report
-              stat[district.name][school.display_name] = stat[district.name][school.display_name].sort{|a,b| b.absentee_percentage <=> a.absentee_percentage}
+              stat[district.name][school.display_name] = stat[district.name][school.display_name].sort{|a, b| b.absentee_percentage <=> a.absentee_percentage}
             end
           end
         end
@@ -84,7 +88,7 @@ class Rollcall::RollcallController < ApplicationController
     end
     stat.each do |district_name, district|
       @statistics[district_name] = {} unless @statistics[district_name]
-      @statistics[district_name] = district.sort{|a,b|
+      @statistics[district_name] = district.sort{|a, b|
         stat[district_name][b.first].first.absentee_percentage <=> stat[district_name][a.first].first.absentee_percentage
       }
     end

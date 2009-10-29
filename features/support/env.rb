@@ -1,27 +1,43 @@
-require 'rubygems'
-require 'spork'
+ENV["RAILS_ENV"] = "cucumber"
+# Sets up the Rails environment for Cucumber
+require File.expand_path(File.dirname(__FILE__) + '/../../config/environment')
 
 Spork.prefork do
   # Loading more in this block will cause your tests to run faster. However, 
   # if you change any configuration or code from libraries loaded here, you'll
   # need to restart spork for it take effect.
-  ENV["RAILS_ENV"] = "cucumber"
-# Sets up the Rails environment for Cucumber
-  require File.expand_path(File.dirname(__FILE__) + '/../../config/environment')
   require 'cucumber/rails/world'
   require 'cucumber/formatter/unicode' # Comment out this line if you don't want Cucumber Unicode support
 # Cucumber::Rails.use_transactional_fixtures
 # Cucumber::Rails.bypass_rescue # Comment out this line if you want Rails own error handling
   # (e.g. rescue_action_in_public / rescue_responses / rescue_from)
   Cucumber::Rails::World.use_transactional_fixtures = false
-  require 'webrat'
+  # If you set this to true, each scenario will run in a database transaction.
+  # You can still turn off transactions on a per-scenario basis, simply tagging 
+  # a feature or scenario with the @no-txn tag. 
+  #
+  # If you set this to false, transactions will be off for all scenarios,
+  # regardless of whether you use @no-txn or not.
 
+  # If you set this to false, any error raised from within your app will bubble 
+  # up to your step definition and out to cucumber unless you catch it somewhere
+  # on the way. You can make Rails rescue errors and render error pages on a
+  # per-scenario basis by tagging a scenario or feature with the @allow-rescue tag.
+  #
+  # If you set this to true, Rails will rescue all errors and render error
+  # pages, more or less in the same way your application would behave in the
+  # default production environment. It's not recommended to do this for all
+  # of your scenarios, as this makes it hard to discover errors in your application.
+  ActionController::Base.allow_rescue = false
+  
+  require 'webrat'
+  require 'cucumber/webrat/element_locator' # Lets you do table.diff!(element_at('#my_table_or_dl_or_ul_or_ol').to_table)
+  require 'webrat/core/matchers' 
   Webrat.configure do |config|
     config.mode = :rails
+    config.open_error_files = false # Set to true if you want error pages to pop up in the browser
   end
-
   require 'cucumber/rails/rspec'
-  require 'webrat/core/matchers'
 
   require "#{Rails.root}/spec/factories"
 
@@ -36,17 +52,7 @@ Spork.prefork do
   ThinkingSphinx.deltas_enabled = true
   ThinkingSphinx.updates_enabled = true
   ThinkingSphinx.suppress_delta_output = true
-  
-  # Before('@sphinx') do
-  #   TS.build
-  #   FileUtils.mkdir_p TS.searchd_file_path
-  #   TS.controller.start
-  #   TS.controller.index
-  # end
-  # 
-  # After('@sphinx') do
-  #   TS.controller.stop
-  # end
+
 end
 
 Spork.each_run do
@@ -83,4 +89,3 @@ After do
   DatabaseCleaner.clean
   DatabaseCleaner.strategy = :transaction
 end
-

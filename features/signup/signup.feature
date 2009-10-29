@@ -69,7 +69,7 @@ Feature: Signing up for an account
       | What is your primary role | Health Alert and Communications Coordinator |
       | Are you a public health professional? | <unchecked> |
       
-    Then I should see "Thanks for signing up"
+    Then I should see "Thanks for signing up!"
     And "john@example.com" should have the "Public" role for "Dallas County"
     And "john@example.com" should not have the "Health Alert and Communications Coordinator" role request for "Dallas County"
     
@@ -88,8 +88,8 @@ Feature: Signing up for an account
       | Password can't be blank |
       | First name can't be blank |
       | Last name can't be blank |
-      | Home jurisdiction can't be blank |
-       
+      | Home Jurisdiction needs to be selected |
+
   Scenario: Signing up as a public health professionals
     When I signup for an account with the following info:
       | Email          | john@example.com |
@@ -120,7 +120,8 @@ Feature: Signing up for an account
     
     Given I have confirmed my account for "john@example.com"
     When I log in as "john@example.com"
-    And I follow "Han"
+    And I follow "My Account"
+    And I follow "Roles"    
     Then I should see "Awaiting Approval"
     
     Given "john@example.com" has been approved for the role "Health Alert and Communications Coordinator"
@@ -156,7 +157,8 @@ Feature: Signing up for an account
 
     Given I have confirmed my account for "john@example.com"
     When I log in as "john@example.com"
-    And I follow "Han"
+    And I follow "My Account"
+    And I follow "Roles"
     Then I should see "Awaiting Approval"
 
     Given "john@example.com" has been approved for the role "Health Alert and Communications Coordinator"
@@ -166,7 +168,7 @@ Feature: Signing up for an account
   Scenario: Signing up should not display system-roles
     Given there is an system only Admin role
     When I go to the sign up page
-    Then I should not see "Admin" in the "What is your primary role in public health or emergency response?" dropdown
+    Then I should not see "Admin" in the "What is your primary role in public health or emergency response?"
 
   Scenario: Confirming a new account 
     When I sign up for an account as "john@example.com"
@@ -208,4 +210,4 @@ Feature: Signing up for an account
     And I should not see "Thanks for signing up"
     And "john@example.com" should not exist
 	  And "admin@dallas.gov" should not receive an email
-    And I should see "Home jurisdiction can't be blank"
+    And I should see "Home Jurisdiction needs to be selected"

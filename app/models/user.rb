@@ -148,6 +148,7 @@ class User < ActiveRecord::Base
   end
 
   def is_admin_for?(other)
+    return true if roles.include?(Role.superadmin)
     if other.class == Jurisdiction
       return true if role_memberships.detect{|r| r.role==Role.admin && other.is_or_is_descendant_of?(r.jurisdiction)}
     elsif other.class == Array
@@ -171,10 +172,11 @@ class User < ActiveRecord::Base
   end
 
   def is_admin?
-    self.jurisdictions.each do |j|
-      return true if j.admins.include?(self)
-    end
-    false
+    self.roles.include?(Role.admin) || self.roles.include?(Role.superadmin) ? true : false
+  end
+
+  def is_jurisdiction_admin?
+    self.roles.include?(Role.admin)
   end
 
   def is_org_approver?
@@ -290,11 +292,7 @@ class User < ActiveRecord::Base
   def viewable_groups
     groups | Group.jurisdictional.by_jurisdictions(jurisdictions) | Group.global
   end
-
-  def is_an_admin?
-    (roles & [Role.admin,Role.superadmin]).empty?
-  end
-  
+   
 private
 
   def assign_public_role

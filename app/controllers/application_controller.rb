@@ -9,7 +9,7 @@ class ApplicationController < ActionController::Base
   helper_method :toolbar
   protect_from_forgery # See ActionController::RequestForgeryProtection for details
 
-  before_filter :login_required
+  before_filter :login_required, :set_locale
 
   layout :choose_layout
   
@@ -24,7 +24,7 @@ class ApplicationController < ActionController::Base
   end
 
   def admin_or_self_required(var = :id)
-    unless current_user.role_memberships.detect{ |rm| rm.role == Role.admin } || current_user.id.to_s == params[var]
+    unless current_user.role_memberships.detect{ |rm| rm.role == Role.admin || rm.role == Role.superadmin } || current_user.id.to_s == params[var]
       flash[:error] = "That resource does not exist or you do not have access to it."
       redirect_to dashboard_path
       false
@@ -39,9 +39,9 @@ class ApplicationController < ActionController::Base
 
   #TODO needs to be moved to rollcall plugin
     def rollcall_required
-      unless current_user.role_memberships.detect{ |rm| rm.role == Role.find_by_name('rollcall')}
-        flash[:error] = "That resource does not exist or you do not have access to it."
-        redirect_to dashboard_path
+      unless current_user.role_memberships.detect{ |rm| rm.role == Role.find_by_name('Rollcall')}
+        flash[:error] = "You have not been given access to the Rollcall application.  Email your OpenPHIN administrator for help."
+        redirect_to about_rollcall_path
         false
       end
     end
@@ -59,7 +59,7 @@ class ApplicationController < ActionController::Base
     end
 
     def admin_required
-      unless current_user.role_memberships.detect{ |rm| rm.role == Role.admin }
+      unless current_user.role_memberships.detect{ |rm| rm.role == Role.admin  || rm.role == Role.superadmin }
         flash[:error] = "That resource does not exist or you do not have access to it."
         redirect_to dashboard_path
         false
@@ -129,13 +129,17 @@ class ApplicationController < ActionController::Base
     def assign_public_role_if_no_role_is_provided
       role_requests = params[:user][:role_requests_attributes]
       role_requests.each_value do |role_request|
-        role_request["role_id"] = Role.public.id if role_request["role_id"].blank? && !role_request["jurisdiction_id"].blank?
+        role_request["role_id"] = Role.public.id.to_s if role_request["role_id"].blank? && !role_request["jurisdiction_id"].blank?
       end
     end
 
     def remove_blank_role_requests
       params[:user][:role_requests_attributes].each do |key,value|
-        params[:user][:role_requests_attributes].delete(key) if value["jurisdiction_id"].blank?
+        params[:user][:role_requests_attributes].delete(key) if (value["jurisdiction_id"].blank? && value["role_id"].blank?)
       end
+    end
+    
+    def set_locale
+      I18n.locale = :en
     end
 end

@@ -32,6 +32,7 @@ class UsersController < ApplicationController
   # GET /users/new.xml
   def new
     @user = User.new
+    @selected_role = Role.public.id
 
     respond_to do |format|
       format.html # new.html.erb
@@ -48,33 +49,32 @@ class UsersController < ApplicationController
   # POST /users
   # POST /users.xml
   def create
+    I18n.locale = "#{I18n.locale}_signup_create"
+
     unless params[:health_professional]
-      params[:user][:role_requests_attributes]['0']['role_id'] = nil
+      params[:user][:role_requests_attributes]['0']['role_id'] = Role.public.id
       params[:user].delete("organization_ids")
       params[:user].delete("description")
     end
 
     remove_blank_role_requests
-    assign_public_role_if_no_role_is_provided
+    if params[:user][:role_requests_attributes]['0']['role_id'].blank? && params[:user][:role_requests_attributes]['0']['jurisdiction_id'].blank?
+      params[:user][:role_requests_attributes]['0'] = {} if params[:user][:role_requests_attributes]['0'].nil?
+      params[:user][:role_requests_attributes]['0']['role_id'] = Role.public 
+    end
+    
 
     @user = User.new params[:user]
-    # Used to compound errors with @user.errors.add so user sees all things that aren't valid on post
-    @user.save unless @user.valid?
-
-    if params[:user][:role_requests_attributes].blank?
-      @user.errors.add "Home jurisdiction", "can't be blank"
-      render :action => "new"
-    else
-      respond_to do |format|
-        if @user.save
-          SignupMailer.deliver_confirmation(@user)
-          format.html
-          format.xml  { render :xml => @user, :status => :created, :location => @user }
-          flash[:notice] = "Thanks for signing up! An email will be sent to #{@user.email} shortly to confirm your account. Once you've confirmed you'll be able to login to TXPhin.\n\nIf you have any questions please email support@#{DOMAIN}."
-        else
-          format.html { render :action => "new" }
-          format.xml  { render :xml => @user.errors, :status => :unprocessable_entity }
-        end
+    respond_to do |format|
+      if @user.save
+        SignupMailer.deliver_confirmation(@user)
+        format.html
+        format.xml  { render :xml => @user, :status => :created, :location => @user }
+        flash[:notice] = "Thanks for signing up! An email will be sent to #{@user.email} shortly to confirm your account. Once you've confirmed you'll be able to login to TXPhin.\n\nIf you have any questions please email support@#{DOMAIN}."
+      else
+        @selected_role = params[:user][:role_requests_attributes]['0']['role_id'].to_i
+        format.html { render :action => "new" }
+        format.xml  { render :xml => @user.errors, :status => :unprocessable_entity }
       end
     end
   end

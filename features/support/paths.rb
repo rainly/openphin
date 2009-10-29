@@ -15,7 +15,7 @@ module NavigationHelpers
       when /the request a role page/i
         new_role_request_path
       when /the pending requests page/i
-        admin_pending_requests_path
+        admin_role_requests_path
       when /the new alert page/i
         new_alert_path
       when /the alerts page/i
@@ -32,6 +32,8 @@ module NavigationHelpers
         edit_user_path(current_user)
       when /the edit profile page$/i
         edit_user_profile_path(current_user)
+      when /^the user account roles page$/i
+        role_requests_path
       when /cancel the alert/
         edit_alert_path(Alert.last, :_action => "cancel")
       when /update the alert/
@@ -42,6 +44,8 @@ module NavigationHelpers
         url_for(:controller => "alerts", :action => "edit", :id => Alert.find_by_title(arg), :_action => "update")
       when /the cancel alert page/i
         url_for(:controller => "alerts", :action => "edit", :id => Alert.find_by_title(arg), :_action => "cancel")
+      when /the admin add user page/i
+        new_admin_user_path
       when /the groups page/i
         admin_groups_path
       when /the add groups? page/i
@@ -63,6 +67,8 @@ module NavigationHelpers
         schools_path
       when /the rollcall school page/i
         school_path(School.find_by_name!(arg))
+      when /^the about rollcall page$/i
+        about_rollcall_path
       when /the Documents page/i
         documents_path
     else
