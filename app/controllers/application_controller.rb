@@ -39,7 +39,7 @@ class ApplicationController < ActionController::Base
 
   #TODO needs to be moved to rollcall plugin
     def rollcall_required
-      unless current_user.role_memberships.detect{ |rm| rm.role == Role.find_by_name('Rollcall')}
+      unless current_user.role_memberships.detect{ |rm| rm.role == Role.rollcall}
         flash[:error] = "You have not been given access to the Rollcall application.  Email your OpenPHIN administrator for help."
         redirect_to about_rollcall_path
         false

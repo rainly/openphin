@@ -1,15 +1,32 @@
+Given 'a role named $name' do |name|
+  if default = Role::Defaults.index(name)
+    Role.send(default)
+  else
+    Role.find_by_name(name) || Factory(:role, :name => name)
+  end
+end
+
+Given /^a[n]? approval role named (.*)$/ do |name|
+end
+
+Given /^a[n]? system role named (.*)$/ do |name|
+  role = Given("a role named #{name}")
+  role.update_attributes :approval_required => true, :user_role => false
+end
+
 Given /^there is an system only (.*) role$/ do |role_name|
-  role = Role.find_by_name(role_name) || Factory(:role, :name => role_name)
-  role.update_attributes!(:user_role => false)
+  role = Given("a role named #{name}")
+  role.update_attributes :user_role => false
 end
 
 Given '$role is a non public role' do |role_name|
-  role = Role.find_by_name(role_name)
+  role = Given("a role named #{name}")
   role.update_attributes(:approval_required => true)
 end
 
 Given /^the role "([^\"]*)" is an alerter$/ do |role|
-  Role.find_by_name(role).update_attributes! :alerter => true
+  role = Given("a role named #{name}")
+  role.update_attributes! :alerter => true
 end
 
 Then 'I should have the "$role" role in "$jurisdiction"' do |role_name, jurisdiction_name|
@@ -41,6 +58,7 @@ Then '"$email" should not have the "$role" role' do |email, role|
   user = User.find_by_email!(email)
   user.has_public_role?.should be_false
 end
+
 Then /^I should see "(.*)" in the role select$/ do |role|
   response.should have_selector("select.role_select option", :content => role)
 end

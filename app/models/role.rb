@@ -26,7 +26,8 @@ class Role < ActiveRecord::Base
     :org_admin => 'OrgAdmin',
     :superadmin => "Superadmin",
     :public => 'Public',
-    :han_coordinator => 'Health Alert and Communications Coordinator'
+    :han_coordinator => 'Health Alert and Communications Coordinator',
+    :rollcall => 'Rollcall'
   }
 
   def self.admin
@@ -47,6 +48,10 @@ class Role < ActiveRecord::Base
 
   def self.han_coordinator
     find_or_create_by_name Defaults[:han_coordinator]
+  end
+  
+  def self.rollcall
+    find_or_create_by_name_and_approval_required_and_user_role Defaults[:rollcall],true,false
   end
 
   named_scope :user_roles, :conditions => { :user_role => true }

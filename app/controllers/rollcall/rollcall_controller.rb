@@ -29,10 +29,10 @@ class Rollcall::RollcallController < ApplicationController
   end
 
   def index
-    toolbar = current_user.roles.include?(Role.find_by_name('Rollcall')) ? "rollcall" : "application"
+    toolbar = current_user.roles.include?(Role.rollcall) ? "rollcall" : "application"
     Rollcall::RollcallController.app_toolbar toolbar
     @districts = current_user.jurisdictions.map(&:school_districts).flatten!
-    if @districts.empty? || !current_user.roles.include?(Role.find_by_name('Rollcall'))
+    if @districts.empty? || !current_user.roles.include?(Role.rollcall)
       flash[:notice] = "You do not currently have any school districts in your jurisdiction enrolled in Rollcall.  Email your OpenPHIN administrator for more information."
       render "about"
     end

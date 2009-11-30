@@ -56,21 +56,10 @@ Given 'a child jurisdiction named $name' do |name|
   end
 end
 
-Given 'a role named $name' do |name|
-  Role.find_by_name(name) || Factory(:role, :name => name)
-end
-
 Given /^a[n]? organization type named (.*)$/ do |name|
   OrganizationType.find_by_name(name) || Factory(:organization_type, :name => name)
 end
 
-
-Given /^a[n]? approval role named (.*)$/ do |name|
-  r = Factory(:role, :name => name, :approval_required => true)
-end
-Given /^a[n]? system role named (.*)$/ do |name|
-  r = Factory(:role, :name => name, :approval_required => true, :user_role => false)
-end
 Given /^(.*) is the parent jurisdiction of:$/ do |parent_name, table|
   jurisdictions = table.raw.first
   parent = Given "a jurisdiction named #{parent_name}"
