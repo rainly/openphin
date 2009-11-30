@@ -13,9 +13,9 @@
 
 class AbsenteeReport < ActiveRecord::Base
   SEVERITY = {
-      :low => {:min => 0.11000, :max => 0.14000},
-      :medium => {:min => 0.14000, :max => 0.25000},
-      :high => {:min => 0.25000, :max => 1.000},
+      :low => 0.11000...0.14000,
+      :medium => 0.14000...0.25000,
+      :high => 0.25000..1.000
       }
   belongs_to :school
   has_one :district, :through => :school
@@ -34,22 +34,23 @@ class AbsenteeReport < ActiveRecord::Base
   named_scope :recent, lambda{|limit| {:limit => limit, :order => "report_date DESC"}}
   named_scope :recent_alerts_by_severity, lambda{|limit| {
       :limit => limit.to_i,
-      :conditions => "(absent/enrolled) >= #{SEVERITY[:low][:min]}",
+      :conditions => "(absent/enrolled) >= #{SEVERITY[:low].first}",
       :order => "(absent/enrolled) DESC"}}
 
   named_scope :absenses, lambda{{:conditions => ['absentee_reports.absent / absentee_reports.enrolled >= .11']}}
   named_scope :with_severity, lambda{|severity|
-    range=SEVERITY[severity]
-    { :conditions => ["(absent / enrolled) >= ? and (absent / enrolled) < ?", range[:min], range[:max]]
+    { :conditions => ["(absent / enrolled) >= ? and (absent / enrolled) < ?", SEVERITY[severity].first, SEVERITY[severity].last]
     }}
 
   def absentee_percentage
     ((absent.to_f / enrolled.to_f) * 100).to_f.round(2)
   end
 
-  def severity
-    return "low" if absentee_percentage >= (SEVERITY[:low][:min]*100) && absentee_percentage < (SEVERITY[:low][:max]*100)
-    return "medium" if absentee_percentage >= (SEVERITY[:medium][:min]*100) && absentee_percentage < (SEVERITY[:medium][:max]*100)
-    return "high" if absentee_percentage >= (SEVERITY[:high][:min]*100)
+  def severity    
+    case absentee_percentage / 100
+    when SEVERITY[:low] then 'low'
+    when SEVERITY[:medium] then 'medium'
+    when SEVERITY[:high] then 'high'
+    end
   end
 end

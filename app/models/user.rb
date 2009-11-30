@@ -213,8 +213,7 @@ class User < ActiveRecord::Base
   end
   
   def has_uploaded?
-    filename = "#{RAILS_ROOT}/message_recordings/tmp/#{token}.wav"
-    return File.exists?(filename)
+    File.exists? "#{RAILS_ROOT}/message_recordings/tmp/#{token}.wav"
   end
 
   def to_dsml(builder=nil)
@@ -282,9 +281,7 @@ class User < ActiveRecord::Base
 
   def generate_upload_token
     filename = "#{RAILS_ROOT}/message_recordings/tmp/#{self.token}.wav"
-    if File.exists?(filename)
-      File.delete(filename)
-    end
+    File.delete(filename) if File.exists?(filename)
     self.token = ActiveSupport::SecureRandom.hex
     self.token_expires_at = Time.zone.now+10.minutes
     self.save
@@ -302,8 +299,7 @@ private
     if (role_requests.nil? && role_memberships.nil?) || (!role_requests.map(&:role_id).flatten.include?(public_role.id) && !role_memberships.map(&:role_id).flatten.include?(public_role.id))
       role_memberships.create!(:role => public_role, :jurisdiction => Jurisdiction.state.first) unless Jurisdiction.state.empty?
     else
-      rr = role_requests
-      rr.each do |request|
+      role_requests.each do |request|
         role_memberships.create!(:role => public_role, :jurisdiction => request.jurisdiction)
         RoleRequest.find_by_id(request.id).destroy
       end unless role_requests.nil? || role_memberships.public_roles.count != 0
@@ -335,8 +331,7 @@ private
   end
   
   def create_default_email_device  
-    email = Device::EmailDevice.new(:email_address => self.email)
-    devices << email
+    devices << Device::EmailDevice.new(:email_address => self.email)
   end
     
   def set_confirmation_token
@@ -344,7 +339,7 @@ private
   end
 
   def set_display_name
-    self.display_name = "#{self.first_name.strip} #{self.last_name.strip}" if self.display_name.nil? || self.display_name.strip.blank?
+    self.display_name = "#{self.first_name.strip} #{self.last_name.strip}" if self.display_name.blank?
   end
   
 end

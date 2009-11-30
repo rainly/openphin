@@ -46,6 +46,6 @@ class School < ActiveRecord::Base
 
   private
   def set_display_name
-    self.display_name = self.name if self.display_name.nil? || self.display_name.strip.blank?
+    self.display_name = self.name if self.display_name.blank?
   end
 end
