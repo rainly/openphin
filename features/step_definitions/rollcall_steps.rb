@@ -1,3 +1,9 @@
+Given "the following symptoms exist:" do |table|
+  table.raw.each do |row|
+    Factory(:symptom, :name => row[0])
+  end
+end
+
 When /^I drop the following file in the rollcall directory\:$/ do |erb_file_template|
   rollcall_drop_dir=File.join(File.dirname(__FILE__), '..', '..', 'tmp', 'rollcall')
   Dir.ensure_exists(rollcall_drop_dir)
@@ -28,4 +34,9 @@ Then /^I should see school data for "([^\"]*)"$/ do |school|
   response.should have_selector(".school_data") do |elm|
     elm.should have_selector(".school", :content => school)
   end
+end
+
+Then '$number ILI reports should exist for "$school"' do |number, name|
+  school = School.find_by_name(name)
+  school.ili_reports.count.should == number.to_i
 end

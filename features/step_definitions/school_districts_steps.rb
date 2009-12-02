@@ -26,3 +26,7 @@ Given /^"([^\"]*)" has the following current absenteeism data:$/ do |isd, table|
                                 :absent => row["Absent"])
   end
 end
+
+Given 'a HIPAA agreement is on file for "$district"' do |name|
+  SchoolDistrict.find_by_name!(name).update_attribute :hipaa_agreement, true
+end

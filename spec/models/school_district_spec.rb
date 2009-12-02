@@ -7,6 +7,7 @@
 #  jurisdiction_id :integer(4)
 #  created_at      :datetime
 #  updated_at      :datetime
+#  hipaa_agreement :boolean(1)
 #
 
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')

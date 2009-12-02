@@ -16,6 +16,7 @@
 #  faculty_absent     :integer(4)
 #  faculty_absent_ili :integer(4)
 #  comments           :text
+#  absentee_report_id :integer(4)
 #  created_at         :datetime
 #  updated_at         :datetime
 #

@@ -172,6 +172,9 @@ Factory.define :school do |m|
   m.association :district, :factory => :school_district
 end
 
+Factory.define :symptom do |m|
+  m.sequence(:name){|t| "Symptom ##{t}"}
+end
 
 Factory.define :target do |m|
   m.association :audience, :factory => :group

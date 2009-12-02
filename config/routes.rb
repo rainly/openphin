@@ -73,6 +73,7 @@ map.delete_folder "folders/:id",
   end
   map.resources :school_districts, :member => {:school => :post}, :controller =>"rollcall/school_districts"
   map.resource :attendance, :controller =>"rollcall/attendances"
+  map.resource :ili_report, :controller =>"rollcall/ili_reports"
 
   # The priority is based upon order of creation: first created -> highest priority.
 

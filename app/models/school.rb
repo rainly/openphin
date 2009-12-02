@@ -19,6 +19,7 @@ class School < ActiveRecord::Base
   belongs_to :district, :class_name => "SchoolDistrict", :foreign_key => "district_id"
   has_many :absentee_reports
   has_many :attendances
+  has_many :ili_reports
   
   before_create :set_display_name
   default_scope :order => "display_name"

@@ -1,17 +1,17 @@
-class Rollcall::AttendancesController < ApplicationController
+class Rollcall::IliReportsController < ApplicationController
   helper :rollcall
   before_filter :rollcall_required
   before_filter :set_toolbar
 
   def show
-    @attendance = Attendance.new
+    @ili_report = IliReport.new
   end
-  
+
   def create
-    @attendance = Attendance.new(params[:attendance])
-    @attendance.school_id = nil unless current_user.schools.include?(@attendance.school)
-    if @attendance.save
-      flash[:notice] = 'Successfully submitted this attendance report'
+    @ili_report = IliReport.new(params[:ili_report])
+    @ili_report.school_id = nil unless current_user.schools.include?(@ili_report.school)
+    if @ili_report.save
+      flash[:notice] = 'Successfully submitted this ILI report'
       redirect_to rollcall_path
     else
       render :show

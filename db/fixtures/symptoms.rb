@@ -1,0 +1,2 @@
+symptoms = ['Headache', 'Lethargy', 'Cough', 'Sore throat', 'Rhinorrhea (runny nose)', 'Congestion', 'Body ache/chills', 'Diarrhea', 'Vomiting']
+symptoms.each {|name| Symptom.find_or_create_by_name(name) }

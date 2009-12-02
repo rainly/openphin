@@ -1,0 +1,130 @@
+<h2>Submit an ILI Report</h2>
+
+<% form_for @ili_report, :url => ili_report_path do |form| %>
+  <div id="edit">
+    <div class="details">
+      
+      <fieldset>
+        <legend>Required Fields</legend>
+      
+        <p>
+          <%= form.label :school_id, 'Facility' %>
+          <%= form.grouped_collection_select :school_id, current_user.school_districts, :schools, :name, :id, :display_name %>
+        </p>
+  
+        <p>
+          <%= form.label :temperature %>
+          <%= form.text_field :temperature, :size => 4 %>
+        </p>
+      
+        <%- Symptom.all.each do |symptom| -%>
+          <fieldset>
+            <legend>Symptoms</legend>
+        
+            <%= check_box_tag "ili_report[symptom_ids][]",
+  	            symptom.id, form.object.symptoms.include?(symptom), :id => "ili_report_symptom_ids_#{symptom.id}", :class => symptom.name.parameterize %>
+  		     <label for="ili_report_symptom_ids_<%= symptom.id %>"><%=h symptom.name %></label>
+          </fieldset>
+        <%- end -%>
+  
+        <p>
+          <%= form.label :onset_date, 'Date of onset of symptoms' %>
+          <%= form.text_field :onset_date, :size => 10, :class => 'datepicker' %>
+        </p>
+
+        <p>
+          <%= form.check_box :in_school_at_onset %>
+          <%= form.label :in_school_at_onset, 'In school at time of onset of symptoms?' %>
+        </p>
+
+        <p>
+          <%= form.label :grade, 'Grade level' %>
+          <%= form.text_field :grade, :size => 4 %>
+        </p>
+      
+        <p>
+          <%= form.label :zip, "Home zip code of student" %>
+          <%= form.text_field :zip, :size => 5 %>
+        </p>
+
+      </fieldset>
+      
+      <fieldset class="hipaa">
+        <legend>Optional Fields</legend>
+
+        <p>
+          <%= form.label :gender, "Gender of student" %>
+          <%= form.select :gender, %w(Female Male) %>
+        </p>
+      
+        <p>
+          <%= form.label :student_name, "Student's Name" %>
+          <%= form.text_field :student_name %>
+        </p>
+      
+        <p>
+          <%= form.label :parent_name, "Parent's Name" %>
+          <%= form.text_field :parent_name %>
+        </p>
+        
+        <p>
+          <%= form.label :address, "Student's Home address" %>
+          <%= form.text_field :address %>
+        </p>
+        
+        <p>
+          <%= form.label :birthdate, "Student's date of birth" %>
+          <%= form.text_field :birthdate, :size => 10, :class => 'datepicker' %>
+        </p>
+        
+        <p>
+          <%= form.label :race, "Student's Race" %>
+          <%= form.text_field :race %>
+        </p>
+        
+        <p>
+          <%= form.label :phone, "Student's Phone number" %>
+          <%= form.text_field :phone %>
+        </p>
+        
+      </fieldset>
+
+      <fieldset>
+        <legend>Followup Information</legend>
+              
+        <p>
+          <%= form.label :doctor_name, 'Name of doctor' %>
+          <%= form.text_field :doctor_name %>
+        </p>
+        
+        <p>
+          <%= form.label :doctor_address, 'Address of doctor' %>
+          <%= form.text_field :doctor_address %>
+        </p>
+        
+        <p>
+          <%= form.check_box :confirmed_by_physician %>
+          <%= form.label :confirmed_by_physician, 'Case confirmed by physician?' %>
+        </p>
+        
+        <p>
+          <%= form.label :diagnosis %>
+          <%= form.text_field :diagnosis %>
+        </p>
+        
+        <p>
+          <%= form.label :treatment %>
+          <%= form.text_field :treatment %>
+        </p>
+
+        <p>
+          <%= form.check_box :released_for_return_to_school %>
+          <%= form.label :released_for_return_to_school, 'Released for return to school?' %>
+        </p>
+        
+      </fieldset>
+      
+      <p><%= form.submit 'Submit' %></p>
+    </div>
+  </div>
+<% end %>
