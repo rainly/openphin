@@ -20,7 +20,6 @@ Feature: A school submitting attendance data
       | Nurse Betty  | nurse.betty@example.com | SchoolNurse    | Houston |
       | Nurse Betty  | nurse.betty@example.com | Rollcall       | Houston |
   
-  @wip    
   Scenario: A user submitting attendance data
     Given I am logged in as "nurse.betty@example.com"
     When I go to the rollcall schools page
@@ -42,4 +41,13 @@ Feature: A school submitting attendance data
     And I press "Submit"
     Then I should see "Successfully submitted"
     And an absentee report should exist for "Lewis Elementary" on "01/01/2009"
+  
+  Scenario: A user submitting invalid attendance data
+    Given I am logged in as "nurse.betty@example.com"
+    When I go to the rollcall schools page
+    When I follow "Submit Attendance Data"
+    And I select "LEWIS ES" from "Facility"
+    And I press "Submit"
+    Then I should not see "Successfully submitted"
+    And an absentee report should not exist for "Lewis Elementary" on "01/01/2009"
     
