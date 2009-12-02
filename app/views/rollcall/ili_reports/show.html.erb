@@ -5,9 +5,9 @@
   <fieldset>
     <legend>Required Fields</legend>
   
-    <p class="select">
+    <p class="select hipaa-control">
       <%= form.label :school_id, 'Facility' %>
-      <%= form.grouped_collection_select :school_id, current_user.school_districts, :schools, :name, :id, :display_name %>
+      <%= with_hipaa_flags form.grouped_collection_select(:school_id, current_user.school_districts, :schools, :name, :id, :display_name) %>
     </p>
 
     <p class="text">

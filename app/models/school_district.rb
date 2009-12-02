@@ -16,6 +16,8 @@ class SchoolDistrict < ActiveRecord::Base
   has_many    :absentee_reports, :through => :schools
   has_many    :daily_infos, :class_name => "SchoolDistrictDailyInfo", :foreign_key => "school_district_id", :order => "report_date asc"
 
+  named_scope :with_hippa_agreement, :conditions => {:hipaa_agreement => true}
+
   def average_absence_rate(date = Date.today)
     daily_info = daily_infos.for_date(date).first
     daily_info = update_daily_info(date) if daily_info.nil?

@@ -24,6 +24,10 @@ class School < ActiveRecord::Base
   before_create :set_display_name
   default_scope :order => "display_name"
 
+  named_scope :with_hippa_agreement, 
+    :include => :district,
+    :conditions => {:school_districts => {:hipaa_agreement => true}}
+
   named_scope :with_alerts,
               :select => "distinct schools.*",
               :include => :absentee_reports,

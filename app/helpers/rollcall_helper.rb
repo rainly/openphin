@@ -76,4 +76,15 @@ Enrolled: #{report.enrolled}"
     )
     chart
   end
+  
+  def with_hipaa_flags(select)
+    flagged_school_ids = School.with_hippa_agreement.map(&:id)
+    select.gsub /option value=\"(\d+)\"/ do |option|
+      if flagged_school_ids.include?($1.to_i)
+        %Q|#{option} data-hipaa="true"|
+      else
+        option
+      end
+    end
+  end
 end

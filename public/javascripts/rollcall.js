@@ -1,5 +1,16 @@
 (function($) {
   $(function() {
+    // HIPAA Stuff
+    var toggleHIPAA = function() {
+      if ($(this).find(':selected[data-hipaa]').length > 0) {
+        $('.hipaa').show();
+      } else {
+        $('.hipaa').hide();
+      }
+    }
+    $('.hipaa-control select').live('change', toggleHIPAA);
+    $('.hipaa-control select').trigger('change');
+    
     $(document).ready(function() {
       $('.datepicker').datepicker({
         showOn: 'both',
