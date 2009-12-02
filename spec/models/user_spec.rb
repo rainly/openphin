@@ -19,7 +19,7 @@
 #  token_expires_at   :datetime
 #  email_confirmed    :boolean(1)      not null
 #  phone              :string(255)
-#  delta              :boolean(1)
+#  delta              :boolean(1)      default(TRUE), not null
 #  credentials        :text
 #  bio                :text
 #  experience         :text

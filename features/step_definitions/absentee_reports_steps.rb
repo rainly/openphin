@@ -54,6 +54,15 @@ Then /^the data at (\S*) should contain$/ do |url, data|
     visit url
     json = ActiveSupport::JSON.decode(response.body)
     json['elements'][0]['values'].should == values
-
   end
+end
+
+Then 'an absentee report should not exist for "$school" on "$date"' do |name, date|
+  school = School.find_by_name(name)
+  school.absentee_reports.find_by_report_date(date).should be_blank
+end
+
+Then 'an absentee report should exist for "$school" on "$date"' do |name, date|
+  school = School.find_by_name(name)
+  school.absentee_reports.find_by_report_date(Date.parse(date)).should_not be_blank
 end

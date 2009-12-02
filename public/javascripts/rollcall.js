@@ -1,6 +1,13 @@
 (function($) {
   $(function() {
     $(document).ready(function() {
+      $('.datepicker').datepicker({
+        showOn: 'both',
+        buttonImage: '/images/schedule.png',
+        buttonImageOnly: true,
+        minDate: 0
+      });
+      
       $("#wrapper").css({"width":"850px"})
       $(".school_selection select#district_id").change(function() {
         $(".school_selection select#school_id option:selected").attr('selected', '');

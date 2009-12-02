@@ -1,0 +1,73 @@
+<h2>Submit an Attendance Report</h2>
+
+<% form_for @attendance, :url => attendance_path do |form| %>
+  <div id="edit">
+    <div class="details">
+      <p>
+        <%= form.label :school_id, 'Facility' %>
+        <%= form.grouped_collection_select :school_id, current_user.school_districts, :schools, :name, :id, :display_name %>
+      </p>
+  
+      <p>
+        <%= form.label :date, 'Reporting Date' %>
+        <%= form.text_field :date, :size => 10, :class => 'datepicker' %>
+      </p>
+  
+      <p>
+        <%= form.label :enrollment %>
+        <%= form.text_field :enrollment, :size => 6 %>
+      </p>
+  
+      <p>
+        <%= form.label :absent %>
+        <%= form.text_field :absent, :size => 6 %>
+      </p>
+  
+      <p>
+        <%= form.label :absent_ili, 'Absent due to ILI' %>
+        <%= form.text_field :absent_ili, :size => 6 %>
+      </p>
+  
+      <p>
+        <%= form.label :left_early, 'Left early due to illness' %>
+        <%= form.text_field :left_early, :size => 6 %>
+      </p>
+  
+      <p>
+        <%= form.label :left_early_ili, 'Left early due to ILI' %>
+        <%= form.text_field :left_early_ili, :size => 6 %>
+      </p>
+  
+      <p>
+        <%= form.label :enrollment_growth, 'The number of students at your facility is' %>
+        <%= form.select :enrollment_growth, Attendance::GrowthOptions %>
+      </p>
+      
+      <p>
+        <%= form.check_box :closed %>
+        <%= form.label :closed, 'Facility Closed' %>
+        
+        <%= form.check_box :closed_flu %>
+        <%= form.label :closed_flu, 'If yes, was it closed for the flu?' %>
+      </p>
+      
+      <p>
+        <%= form.label :faculty_absent %>
+        <%= form.text_field :faculty_absent, :size => 6 %>
+      </p>
+  
+      <p>
+        <%= form.label :faculty_absent, 'Faculty with ILI' %>
+        <%= form.text_field :faculty_absent, :size => 6 %>
+      </p>
+      
+      <p>
+        <%= form.label :comments, 'Comments or other findings' %>
+        <%= form.text_area :comments, :rows => 6 %>
+      </p>
+      
+      <p><%= form.submit 'Submit' %></p>
+    </div>
+  </div>
+<% end %>
+  

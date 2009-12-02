@@ -72,6 +72,7 @@ map.delete_folder "folders/:id",
     school.chart '/chart/:timespan', :controller => "rollcall/schools", :action => "chart", :timespan => 7
   end
   map.resources :school_districts, :member => {:school => :post}, :controller =>"rollcall/school_districts"
+  map.resource :attendance, :controller =>"rollcall/attendances"
 
   # The priority is based upon order of creation: first created -> highest priority.
 
