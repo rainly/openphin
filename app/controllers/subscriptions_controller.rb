@@ -23,4 +23,17 @@ class SubscriptionsController < ApplicationController
     redirect_to documents_panel_path
   end
 
+  def preview_destroy
+
+  end
+
+  def destroy
+    @channel = current_user.owned_channels.find(params[:channel_id])
+    if @channel
+
+    else
+      flash[:error] = "You are not an owner of this share."
+      redirect_to documents_panel_path
+    end
+  end
 end
